@@ -32,7 +32,7 @@ export const fetchProducts = (dispatch) => {
       dispatch(setFilteredProductList());
       
       extractCategories(products);
-      console.log(`fetched ${products.length} products`)
+      // console.log(`fetched ${products.length} products`)
     }
   );
   
