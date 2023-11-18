@@ -1,4 +1,7 @@
-import {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
+
+import { useSearchParams } from "react-router-dom";
+
 import ProductList from './components/ProductList';
 import SearchBar from './components/SearchBar';
 import { useDispatch, useSelector } from 'react-redux';
@@ -16,13 +19,26 @@ function App(){
   const dispatch = useDispatch();
   const { categories, filteredCategories } = useSelector((state) => state.productListReducer);
   
+  let [searchParams, setSearchParams] = useSearchParams({});
+  
+  
   useEffect(() => {
-      fetchProducts(dispatch)
+    fetchProducts(dispatch);
+    
+    const urlFilters = [...searchParams.keys()];
+    dispatch(setFiltersOnCategories(urlFilters))
   }, []);
   
-  const handleSelectCategories = (newCategory) => {
+  const handleSelectCategories = (newCategory, value) => {
     dispatch(setFiltersOnCategories(newCategory));
     dispatch(setFilteredProductList());
+
+    setSearchParams(prev => {
+      if(prev.has(newCategory)) prev.delete(newCategory);
+      else prev.append(newCategory, '1');
+      return prev;
+    });
+    
   };
 
   return (
@@ -48,11 +64,12 @@ function App(){
                     id={category}
                     className="cursor-pointer w-5 h-8"
                     checked={filteredCategories.includes(category)}
-                    onChange={() => handleSelectCategories(category)}
+                    onChange={(e) => 
+                      handleSelectCategories(category, e.target.checked)
+                    }
                   />
                 </li>
               ))}
-
             </ul>
           </div>
           <div className="overflow-auto flex flex-col gap-4 col-span-3 p-4 border border-gray-500">

@@ -6,9 +6,10 @@ export default function SearchBar(){
   const [inputValue, setInputValue] = useState('');
   const dispatch = useDispatch();
   
-  const handleSearch = () => {
-    dispatch(setSearchQuery(inputValue));
-    dispatch(setFilteredProductList(inputValue));
+  const handleSearch = (newValue) => {
+    setInputValue(old => newValue);
+    dispatch(setSearchQuery(newValue));
+    dispatch(setFilteredProductList(newValue));
   };
   
   return (
@@ -16,13 +17,13 @@ export default function SearchBar(){
       <div className="flex justify-end gap-2">
         <input
           value={inputValue}
-          onChange={(e)=> setInputValue(e.target.value)}
+          onChange={(e)=> handleSearch(e.target.value)}
           className="text-black  text-xl rounded-lg py-2 px-12" placeholder="Search Products here..."
         />
         <button
-          onClick={handleSearch}
-          className="bg-blue-700 hover:bg-blue-700 rounded-lg px-4"
-        >Search</button>
+          onClick={() => handleSearch('')}
+          className="bg-blue-700 hover:bg-blue-600 rounded-lg px-4"
+        >Clear Search</button>
       </div>
     </>
   )

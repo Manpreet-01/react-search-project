@@ -14,34 +14,35 @@ export const productListSlice = createSlice({
   reducers: {
     setProductList: (state, action) => {
       state.products = action.payload;
-      // initially show all products
-      state.filteredProducts = action.payload;
     },
     setCategories: (state, action) => {
       state.categories = action.payload;
-      // initially apply all filters
-      state.filteredCategories = action.payload;
-      
     },
     setFiltersOnCategories: (state, action) => {
       const currFilters = state.filteredCategories;
       const newFilter = action.payload;
+      
 
       if(currFilters.includes(newFilter)){
         const updatedFilters = currFilters.filter(filter => filter !== newFilter);
         state.filteredCategories = updatedFilters;
       }
       else {
-        state.filteredCategories.push(newFilter);
+        const filtersToAdd = Array.isArray(newFilter) ? newFilter : [newFilter];
+        state.filteredCategories.push(...filtersToAdd);
       }
     },
 
-    setFilteredProductList: (state, action) => {
-      state.filteredProducts = state.products.filter((product) => {
-        if(state.filteredCategories.includes(product.category)){
-          return product;
-        }
-      });
+    setFilteredProductList: (state, action) => {     
+      if(state.filteredCategories.length !== 0){
+        state.filteredProducts = state.products.filter((product) => {
+          if(state.filteredCategories.includes(product.category)){
+            return product;
+          }
+        });
+      } else {
+        state.filteredProducts = state.products;
+      }
       
       if(state.searchQuery){
         state.filteredProducts = state.filteredProducts.filter((product) => {
@@ -52,7 +53,6 @@ export const productListSlice = createSlice({
     
     setSearchQuery: (state, action) => {
       state.searchQuery = action.payload;
-      console.log(action.payload);
     },
   }
 });
